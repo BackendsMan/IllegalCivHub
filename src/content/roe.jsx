@@ -1,0 +1,195 @@
+// Illegal Civ ROE content. Each section becomes a card + a "Jump to section" entry.
+// Building blocks match the FactionROE site: <Rules>, <Sub>, <Warn>, <Callout>, <Chips>, <Tiers>.
+
+export function Rules({ items }) {
+  return (
+    <ul className="rules">
+      {items.map((r, i) => (
+        <li key={i}>{r}</li>
+      ))}
+    </ul>
+  )
+}
+
+export function Sub({ id, title, badge, children }) {
+  return (
+    <div className="sub" id={id}>
+      <div className="sub-head">
+        <h3>{title}</h3>
+        {badge && <span className="badge">{badge}</span>}
+      </div>
+      {children}
+    </div>
+  )
+}
+
+export function Callout({ label, children, warn }) {
+  return (
+    <div className={`callout${warn ? ' warn' : ''}`}>
+      <span className="label">{label}</span>
+      <p>{children}</p>
+    </div>
+  )
+}
+
+export const Warn = ({ children }) => <Callout label="Warning" warn>{children}</Callout>
+
+// Quick links to subsections in the same card: [[id, label], ...]
+export function Chips({ links }) {
+  return (
+    <ul className="chips" style={{ '--n': links.length }}>
+      {links.map(([id, label]) => (
+        <li key={id}>
+          <a href={`#/roe?s=${id}`} data-jump={id}>{label}</a>
+        </li>
+      ))}
+    </ul>
+  )
+}
+
+// Three-card tier track: [{ id, title, badge, text }]
+export function Tiers({ tiers }) {
+  return (
+    <div className="stages">
+      {tiers.map((t) => (
+        <div className="sub" id={t.id} key={t.id}>
+          <span className="kicker">Weekly limit</span>
+          <div className="sub-head">
+            <h3>{t.title}</h3>
+            <span className="badge">{t.badge}</span>
+          </div>
+          <p>{t.text}</p>
+        </div>
+      ))}
+    </div>
+  )
+}
+
+export const SECTIONS = [
+  {
+    id: 'scheme-requirements',
+    title: 'Scheme Requirements & Guidelines',
+    body: (
+      <>
+        <p>
+          This is a serious cinematic text and voice based roleplay server designed around realism and authentic New York style based RP by Adxtti &amp; Walking.
+          Our goal is to maintain a high-quality environment where factions, individuals, and gangs can develop meaningful stories and rivalries through
+          structured, immersive interactions.
+        </p>
+        <Warn>Any abuse or exploitation of the Illegal Civilian Scheme will result in immediate removal from the program.</Warn>
+        <Sub id="background-requirement" title="Character / Group Background Requirement">
+          <Rules
+            items={[
+              'You must have a dedicated thread showcasing the background history of your character or group. The thread must include up-to-date information regarding your character development and how you intend to roleplay within the illegal scene.',
+              'Before participating in the scheme, you must establish the identity, role, and direction of your character or group. This must be clearly explained within your background thread and should outline how you plan to develop your roleplay within the illegal scene. Whether you choose to portray a Fraud Specialist, Arms Dealer, Street Racer, Vehicle Technician, Narcotics Smuggler, Kingpin, Lone Operator, Loyal Soldier, Brotherhood, or another unique concept, creativity is encouraged. The only limitation is that your roleplay must remain within the boundaries of the server rules.',
+              'You are required to have a minimum of 20 validated interactions (positive or negative) documented on your forums thread, with accompanying clips showcasing your roleplay, before your character or illegal group can be considered eligible to officially join the scheme. Meeting this requirement does not guarantee acceptance. All submissions will be reviewed based on roleplay quality, consistency, character development, and adherence to server standards. We strongly encourage all interactions to be submitted in clip format, with each clip being at least 3 minutes in length. Your thread should showcase a variety of roleplay scenarios, including both positive and negative interactions, while highlighting the progression and development of your character or group.',
+              'Consistently displaying low-effort, unrealistic, or poor-quality roleplay may result in immediate removal from the scheme. Illegal Civilian Management reserves the right to review participation and take action when a character or group fails to meet the expected roleplay standards.',
+              'All logged interactions must include either a roleplay clip of at least 3 minutes in length or a detailed screenshot accompanied by a written explanation of the scenario, containing a minimum of 120 words with a one minute clip posted below. Posts that fail to meet these standards, lack sufficient context, or do not properly showcase the interaction may be deleted at the discretion of Illegal Civilian Management.',
+              'Any thread with no activity for 5 consecutive days will be locked and permanently archived by Illegal Civilian Management. Archived threads cannot be used as active submissions and may require a new thread if participation in the scheme continues.',
+              'Illegal Civilians and members of Illegal Civilian Groups are prohibited from maintaining a secondary character within the Police Department or Department of Justice. This restriction exists to prevent conflicts of interest, metagaming, and unfair advantages between legal and illegal roleplay. A secondary character within Emergency Medical Services (EMS) is permitted.',
+              'Once accepted into the TFB Individual Illegal Civilian Scheme, an individual Illegal Civilian is prohibited from participating in or portraying membership within an Illegal Civilian Group. This restriction is in place to maintain clear roleplay identities, prevent conflicts of interest, and ensure fair progression within the scheme.',
+              'Individual Illegal Civilian threads will remain private. Illegal Civilian Group threads will be publicly visible to allow community oversight and showcase roleplay progression.',
+              'Illegal Civilians may have origins, connections, or relationships with the territory of an official faction. However, they are not permitted to function as an unofficial member of that faction. If an Illegal Civilian begins participating in faction beefs, wars, or organized faction activity, they will be removed from the scheme and instructed to pursue official faction membership instead. The purpose of the Illegal Civilian Scheme is to support independent character-driven roleplay. Participants must maintain their own storylines, conflicts, interactions, and progression rather than using the scheme as a way to gain faction involvement without joining the faction.',
+              'Illegal Civilian Groups must have their own established area of operation. Your group should have a dedicated location where the majority of your roleplay occurs. This can be a small residential area, property, or unique location and does not need to resemble the large-scale turf controlled by official factions. Entire Illegal Civilian Groups are prohibited from basing their roleplay on official faction turf. You are expected to create your own identity, environment, and storyline rather than operating as an extension of an existing faction. Territory selection should be considered carefully. If your chosen location becomes occupied or claimed by an official faction, Illegal Civilian Management may require your group to relocate. Multiple smaller New York-inspired locations have been provided to encourage independent group development. Additionally, Illegal Civilian Groups are not required to portray a low-income lifestyle, creative and unique roleplay environments are encouraged.',
+            ]}
+          />
+        </Sub>
+      </>
+    ),
+  },
+  {
+    id: 'drop-schedule',
+    title: 'Scheme Drop Schedule & Weapon Regulations',
+    body: (
+      <Rules
+        items={[
+          'Scheme drops will occur every two weeks on Friday only. Participants are responsible for contacting Illegal Civilian Management on the scheduled drop day to receive their drop. Failure to contact management on the designated day will result in the drop being missed. You will need to wait until the next scheduled drop opportunity.',
+          'Every interaction involving your Illegal Civilian character or group must be properly recorded and logged, regardless of whether weapons are involved. This includes all attacks, robberies, and other criminal activities carried out while participating in the scheme. Failure to maintain proper documentation will result in disciplinary action, which may include removal from the scheme, character death, and the removal of all weapons from your character. This includes all attacks & robberies you carry out on this character or within this group.',
+          'All weapons and ammunition obtained, sold, or exchanged through the Illegal Civilian Scheme must be documented and logged for review by TFB Illegal Civilian Management. Firearms issued by the scheme that are lost through legitimate roleplay circumstances may be replaced on the next scheduled drop date. However, all losses must be supported with a 3-minute minimum clip proving how the weapon was lost. Any suspicious, fabricated, or insufficiently logged weapon losses may be rejected. Weapons sold by a participant are considered a voluntary transaction and will not be replaced. Any attempt to falsify weapon losses or exploit the replacement system for additional weapons will result in punishment and potential removal from the scheme.',
+          'All Illegal Civilians and Illegal Civilian Groups are restricted to a purchase limit of two firearms per week depending on their tier. Attempting to exceed this limit or bypass the gun-limit may result in disciplinary action from Illegal Civilian Management.',
+          'After completing a trade or sale with a specific faction, Illegal Civilian, or Illegal Civilian Group, you must wait a minimum of 7 days before conducting another transaction with the same party. Failure to follow this cooldown period will result in punishment from Illegal Civilian Management.',
+          <><strong>ALL ATTACKS MUST BE LOGGED ON YOUR THREAD.</strong> Any attack carried out by your character or group that is not properly documented will be considered a violation of scheme requirements and may result in disciplinary action.</>,
+          'Any participant involved in an attack or defense scenario must remain in the server for 30 minutes following the initiation of the engagement. An attack is officially considered started when the first shot is fired or when a weapon is used with offensive intent toward another player. This rule applies to both attackers and defenders to ensure proper roleplay continuation and prevent combat avoidance.',
+          'Illegal Civilians and Illegal Civilian Groups are limited to a maximum of 2 attacks per week. After completing an attack, a mandatory 12-hour cooldown period must pass before another attack may be initiated. Once an Illegal Civilian or Illegal Civilian Group reaches Tier 2, their weekly limit increases to a maximum of 6 attacks per week. The 8-hour cooldown period between attacks remains in effect. All attacks must be properly documented and logged within your designated illegal character or illegal group thread and must have proper-build up to the attack. Failure to maintain accurate logs may result in disciplinary action.',
+          'All weekly restrictions, including attacks, firearm purchases, trades, and sales, will reset every Sunday. Participants may resume using their weekly allowances once the reset has occurred.',
+        ]}
+      />
+    ),
+  },
+  {
+    id: 'rules-of-engagement',
+    title: 'Illegal Civilian Rules of Engagement',
+    body: (
+      <>
+        <Warn>Any abuse or exploitation of the Illegal Civilian Scheme will result in immediate removal from the program and a permanent blacklist from future participation.</Warn>
+        <Rules
+          items={[
+            "Before initiating any attack, Illegal Civilians and Illegal Civilian Groups must know exactly who they are targeting and have a valid roleplay reason for doing so. Randomly attacking individuals due to faction association, location, or assumption is not permitted. If targeting a faction member, the individual must be properly identified within their faction's turf or through established roleplay. You should always know who you are shooting at and why you are shooting at that specific person. Lack of proper identification or reasoning may result in punishment or the loss of your group.",
+            'You are required to have a minimum of 5 negative interactions with another character before you are permitted to initiate a kill-based attack, unless an established shooting conflict already exists. Regardless of the circumstances, all attacks must have proper roleplay development and justification that can be reviewed and validated by Illegal Civilian Management. Simply meeting the interaction requirement does not automatically justify an attack.',
+            'If another character directly disrespects or targets deceased individuals associated with your character(s) during your first interaction with them, they may be considered eligible for an immediate attack or kill. Any interaction involving active gunplay or the direct mention/disrespect of deceased characters will override the standard 5 negative interaction requirement. However, all attacks must still maintain proper roleplay context and justification that can be reviewed by Illegal Civilian Management.',
+            'All kills, robberies, and shootings are required to be pinpointed and clipped. Participants must provide clear evidence showing who was involved, what occurred, and the roleplay justification behind the action. Failure to provide sufficient video evidence may result in the situation being voided with no further action taken.',
+            'Illegal Civilians have the ability to conduct solo attacks or plan attacks alongside other Illegal Civilians who have been accepted into the illegal-civilian scheme. Any solo attack performed will count toward your weekly attack limit. Participants are responsible for tracking their own attack usage and remaining within the established scheme limits.',
+            'Any weapon interaction directed toward another player, including firing a weapon in their direction, will be considered an attack and must be properly documented within your thread. All attacks must be logged with the required evidence and information. Standard robberies will not count as attacks unless shots are fired during the incident.',
+            'Every attack must have proper roleplay development, reasoning, and escalation behind it. Escalation is a required part of conflict and should demonstrate a clear progression leading up to the attack. Poor escalation includes any attack that lacks sufficient buildup, meaningful interactions, or a valid roleplay justification. This may result in disciplinary action or permanent removal from the scheme. If you believe a kill was not properly escalated, lacked sufficient roleplay, or was unjustified, you are encouraged to submit a report for Illegal Civilian Management to review.',
+            'If you have an active report against another Illegal Civilian or Illegal Civilian Group, you must not participate in any interactions with the reported individual or group until a verdict has been reached and officially posted. This applies in both directions. The reported party must also avoid interacting with the reporting individual or group while the report is under review.',
+            'Any behavior, action, or roleplay that is deemed by Illegal Civilian Management (ICM) to be a poor representation of Illegal Civilian roleplay may result in disciplinary action. Participants are expected to maintain a high standard of roleplay quality, professionalism, and creativity while representing the scheme.',
+            'The use of exotic vehicles during attacks is not permitted. This includes vehicles such as Lamborghinis, Ferraris, Bentleys, and other luxury supercars. Approved sports cars and muscle cars may be used. Any vehicle that is not listed as eligible for Illegal Civilians or official factions cannot be used to conduct attacks from. Violating this rule may result in punishment from Illegal Civilian Management. If unsure, check the MVP Exotics Discord to see which vehicles are approved and which are restricted.',
+            'Ensure that any attack or situation involving weapons is roleplayed with a high level of realism and proper execution. Poor, rushed, or unrealistic weapon-related roleplay will not be tolerated and will not be taken lightly.',
+            'Displaying a weapon during a robbery does not count as an attack unless shots are fired. All robbery scenarios must follow the established TFB 5.0 robbery guidelines and cooldown requirements. Failure to follow the robbery guidelines may result in punishment or removal from the scheme. Please refer to the Robbery Section within the Server Guidelines for further information.',
+            'Illegal Civilians and Illegal Civilian Groups may not intentionally act as "defense" for an official faction while operating within their turf. If the roleplay does not naturally support your involvement, you should not participate. Illegal Civilians should not purposely position themselves on faction turf or wait for conflicts after being made aware that an attack is being planned against a faction they are associated with. Any attempt to provide unfair support or interfere with faction conflicts in this manner will result in PUNISHMENT.',
+            'As an Illegal Civilian, any attack committed alongside faction members will still count toward your weekly available attack limit. Only Illegal Civilians who have been accepted into the scheme are permitted to participate in attacks alongside official factions. Abuse of this allowance or participation outside of scheme approval may result in PUNISHMENT.',
+            'An attack is defined as any situation involving gunfire directed toward another player with the intent to harm or kill. Any interaction that meets this criteria will be considered an attack and must follow all applicable scheme guidelines.',
+            'Shooting for roleplay purposes still counts as an attack, as it involves gunplay directed toward another player. Any situation involving this type of engagement will count toward your limited attack limit and must be properly logged within your thread.',
+            'The maximum amount of armor that illegal civilians are permitted to have is 30. Exceeding this limit will result in a strike being issued.',
+            'Players are not permitted to be members of multiple groups of different characters at the same time. You are expected to roleplay exclusively within the group that you have chosen to join. Participating in or representing more than one group will result in disciplinary action.',
+            <><strong>Hostile Actions / Environment</strong> include putting an opposing faction member into death mode, chasing them on foot or by vehicle, verbally dissing their set, aiming a weapon without firing, repeatedly spinning their turf (minimum 3 times if the faction reacts), or intentionally provoking them on their turf. Any hostility created in traffic also counts, with the initiating faction responsible for creating the hostile environment and subject to mutual combat. If the defending faction reacts to the hostile environment, it is considered an attack by the initiating faction, which will receive the 12-Hour Deathmatching Attack Cooldown.</>,
+          ]}
+        />
+      </>
+    ),
+  },
+  {
+    id: 'transaction-limits',
+    title: 'Weapon & Ammunition Transaction Limits',
+    body: (
+      <>
+        <p>All weapon and ammunition transactions must remain within the weekly limits assigned to your current tier. These limits apply to all purchases, sales, and trades.</p>
+        <Chips
+          links={[
+            ['firearm-limits', 'Weapon Transaction Limits'],
+            ['ammunition-limits', 'Ammunition Transaction Limits'],
+            ['transaction-regulations', 'Transaction Regulations'],
+          ]}
+        />
+        <Sub id="firearm-limits" title="Weapon Transaction Limits (Firearms)">
+          <Tiers
+            tiers={[
+              { id: 'firearms-tier-1', title: 'Tier 1', badge: '3 firearms', text: 'Maximum of 3 firearms may be purchased, sold, or traded per week.' },
+              { id: 'firearms-tier-1-5', title: 'Tier 1.5', badge: '5 firearms', text: 'Maximum of 5 firearms may be purchased, sold, or traded per week.' },
+              { id: 'firearms-tier-2', title: 'Tier 2', badge: '7 firearms', text: 'Maximum of 7 firearms may be purchased, sold, or traded per week.' },
+            ]}
+          />
+        </Sub>
+        <Sub id="ammunition-limits" title="Ammunition Transaction Limits">
+          <Tiers
+            tiers={[
+              { id: 'ammo-tier-1', title: 'Tier 1', badge: '20 rounds', text: 'Maximum of 20 total rounds may be purchased, sold, or traded per week.' },
+              { id: 'ammo-tier-1-5', title: 'Tier 1.5', badge: '40 rounds', text: 'Maximum of 40 total rounds may be purchased, sold, or traded per week.' },
+              { id: 'ammo-tier-2', title: 'Tier 2', badge: '60 rounds', text: 'Maximum of 60 total rounds may be purchased, sold, or traded per week.' },
+            ]}
+          />
+        </Sub>
+        <Sub id="transaction-regulations" title="Transaction Regulations">
+          <Rules
+            items={[
+              'Ammunition limits apply across all transactions combined within a 7-day period.',
+              'Attempting to bypass limits through third parties, alternate characters, or splitting transactions between multiple interactions is strictly prohibited.',
+              'Illegal Civilian Management will monitor transaction logs to ensure all firearm and ammunition activity remains within the established limits.',
+            ]}
+          />
+          <p>Failure to follow these regulations may result in punishment or removal from the scheme.</p>
+        </Sub>
+      </>
+    ),
+  },
+]

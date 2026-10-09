@@ -1,0 +1,59 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Keep in sync with src/admins.js.
+    function isAdmin() {
+      return request.auth != null && request.auth.token.email in [
+        'jayb@tfbhub.local', 'chris@tfbhub.local', 'aril@tfbhub.local', 'seim@tfbhub.local', 'blaine@tfbhub.local',
+        'walking@tfbhub.local', 'babyj@tfbhub.local', 'nas@tfbhub.local', 'johansei@tfbhub.local', 'pax@tfbhub.local'
+      ];
+    }
+
+    function str(v, min, max) {
+      return v is string && v.size() >= min && v.size() <= max;
+    }
+
+    match /threads/{id} {
+      allow read: if isAdmin();
+
+      // Anyone can submit, but only a well-formed, pending application. Limits mirror src/questions.js.
+      allow create: if request.resource.data.keys().hasOnly([
+            'groupType', 'rpExperience', 'leadershipExperience', 'priorStrikes', 'tfbPunishments', 'illegalCivDefinition',
+            'groupName', 'threadLink', 'threadHolder', 'leadership', 'highCouncil', 'discordInvite', 'members',
+            'uniqueness', 'goals', 'rulesEnforcement', 'roeUnderstanding',
+            'status', 'createdAt'])
+        && request.resource.data.groupType in ['Car Group', 'Fraud Group', 'Weapon Group', 'Drug Group']
+        && str(request.resource.data.rpExperience, 20, 3000)
+        && str(request.resource.data.leadershipExperience, 2, 3000)
+        && request.resource.data.priorStrikes in ['Yes', 'No']
+        && request.resource.data.tfbPunishments in ['Yes', 'No']
+        && str(request.resource.data.illegalCivDefinition, 20, 3000)
+        && str(request.resource.data.groupName, 1, 80)
+        && str(request.resource.data.threadHolder, 1, 100)
+        && str(request.resource.data.leadership, 1, 300)
+        && str(request.resource.data.highCouncil, 1, 300)
+        && str(request.resource.data.discordInvite, 1, 200)
+        && request.resource.data.discordInvite.matches('^https://(discord[.]gg|discord[.]com/invite)/[A-Za-z0-9-]+$')
+        && str(request.resource.data.members, 2, 2000)
+        && str(request.resource.data.uniqueness, 20, 3000)
+        && str(request.resource.data.goals, 20, 3000)
+        && str(request.resource.data.rulesEnforcement, 20, 3000)
+        && str(request.resource.data.roeUnderstanding, 20, 3000)
+        && str(request.resource.data.threadLink, 1, 300)
+        && request.resource.data.threadLink.matches('^https://(www[.]|m[.])?(youtube[.]com|youtu[.]be|streamable[.]com)/.+$')
+        && request.resource.data.status == 'pending'
+        && request.resource.data.createdAt == request.time;
+
+      // One decision per thread; reviewer name must be the signed-in admin's own name.
+      allow update: if isAdmin()
+        && resource.data.status == 'pending'
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'reviewedBy', 'reviewedAt'])
+        && request.resource.data.status in ['approved', 'denied']
+        && request.resource.data.reviewedBy == request.auth.token.name
+        && request.resource.data.reviewedAt == request.time;
+
+      allow delete: if false;
+    }
+  }
+}
