@@ -38,10 +38,13 @@ export const QUESTIONS = [
   { id: 'groupName', type: 'short', min: 1, max: 80, label: 'Illegal Civilian Group Name' },
   {
     id: 'threadLink', type: 'link', max: 300,
-    pattern: /^https:\/\/(www\.|m\.)?(youtube\.com|youtu\.be|streamable\.com)\/\S+$/,
+    // Any web link (Streamable, YouTube, Medal, Google Drive, Twitch…). "https://" is optional; it's added on submit.
+    pattern: /^(https?:\/\/)?[^\s/]+\.[^\s/]{2,}(\/\S*)?$/i,
+    normalize: (v) => (/^https?:\/\//i.test(v) ? v : `https://${v}`),
     placeholder: 'https://streamable.com/abc123',
-    error: 'Must be an https Streamable or YouTube link.',
+    error: 'That doesn’t look like a link. Paste the full link to your clip.',
     label: 'Provide a streamable link of your Illegal Civilian Group Thread.',
+    hint: 'Any video link works: Streamable, YouTube, Medal, Google Drive, Twitch, etc.',
   },
   { id: 'threadHolder', type: 'short', min: 1, max: 100, label: 'Discord of Thread-holder.' },
   { id: 'leadership', type: 'short', min: 1, max: 300, label: 'Leadership' },

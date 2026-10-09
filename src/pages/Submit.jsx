@@ -51,7 +51,7 @@ export default function Submit() {
     setStatus('saving')
     try {
       await addDoc(collection(db, 'threads'), {
-        ...Object.fromEntries(QUESTIONS.map((q) => [q.id, answers[q.id].trim()])),
+        ...Object.fromEntries(QUESTIONS.map((q) => [q.id, (q.normalize ?? String)(answers[q.id].trim())])),
         status: 'pending',
         createdAt: serverTimestamp(),
       })
