@@ -20,7 +20,7 @@ service cloud.firestore {
       // Anyone can submit, but only a well-formed, pending application. Limits mirror src/questions.js.
       allow create: if request.resource.data.keys().hasOnly([
             'groupType', 'rpExperience', 'leadershipExperience', 'priorStrikes', 'tfbPunishments', 'illegalCivDefinition',
-            'groupName', 'threadLink', 'threadHolder', 'leadership', 'highCouncil', 'discordInvite', 'members',
+            'groupName', 'threadLink', 'threadHolder', 'threadHolderId', 'leadership', 'highCouncil', 'discordInvite', 'members',
             'uniqueness', 'goals', 'rulesEnforcement', 'roeUnderstanding',
             'status', 'createdAt'])
         && request.resource.data.groupType in ['Car Group', 'Fraud Group', 'Weapon Group', 'Drug Group']
@@ -31,6 +31,7 @@ service cloud.firestore {
         && str(request.resource.data.illegalCivDefinition, 20, 3000)
         && str(request.resource.data.groupName, 1, 80)
         && str(request.resource.data.threadHolder, 1, 100)
+        && request.resource.data.threadHolderId is string && request.resource.data.threadHolderId.matches('^[0-9]{17,20}$')
         && str(request.resource.data.leadership, 1, 300)
         && str(request.resource.data.highCouncil, 1, 300)
         && str(request.resource.data.discordInvite, 1, 200)

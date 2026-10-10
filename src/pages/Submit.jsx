@@ -75,7 +75,7 @@ export default function Submit() {
     if (!tried || isValid(q, answers[q.id])) return null
     const v = (answers[q.id] ?? '').trim()
     if (!v) return q.type === 'choice' ? 'Pick an option.' : 'This question is required.'
-    if (q.type === 'link') return q.error
+    if (q.pattern) return q.error
     return `Too short. At least ${q.min} characters.`
   }
 
@@ -125,7 +125,7 @@ export default function Submit() {
     return (
       <>
         <input className={field} maxLength={q.max} value={v} onChange={set(q.id)} placeholder={q.placeholder} />
-        {!tried && q.type === 'link' && v && !isValid(q, v) && <p className="mt-2 text-sm text-accent">{q.error}</p>}
+        {!tried && q.pattern && v && !isValid(q, v) && <p className="mt-2 text-sm text-accent">{q.error}</p>}
       </>
     )
   }

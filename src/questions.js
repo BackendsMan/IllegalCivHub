@@ -1,6 +1,6 @@
 // Thread application questions. Shown on /submit and in the admin dashboard.
 // If you add/rename an id or change a limit, update firestore.rules to match.
-// type: choice | short | long | link   (min/max = character limits)
+// type: choice | short | long | link   (min/max = character limits; pattern = must match instead)
 
 const yesNo = ['Yes', 'No']
 
@@ -47,6 +47,14 @@ export const QUESTIONS = [
     hint: 'Any video link works: Streamable, YouTube, Medal, Google Drive, Twitch, etc.',
   },
   { id: 'threadHolder', type: 'short', min: 1, max: 100, label: 'Discord of Thread-holder.' },
+  {
+    id: 'threadHolderId', type: 'short', max: 20,
+    pattern: /^\d{17,20}$/,
+    placeholder: '123456789012345678',
+    error: 'Must be the 17–20 digit Discord user ID, not a username.',
+    label: "Thread-holder's Discord User ID.",
+    hint: 'Discord → Settings → Advanced → turn on Developer Mode. Then right-click the thread-holder → Copy User ID. Used to @ them when the thread is approved.',
+  },
   { id: 'leadership', type: 'short', min: 1, max: 300, label: 'Leadership' },
   { id: 'highCouncil', type: 'short', min: 1, max: 300, label: 'High-Council' },
   {
@@ -85,8 +93,8 @@ export const QUESTIONS = [
 
 export const STEPS = [
   { title: 'Background', from: 1, to: 6 },
-  { title: 'Group', from: 7, to: 13 },
-  { title: 'Vision', from: 14, to: 17 },
+  { title: 'Group', from: 7, to: 14 },
+  { title: 'Vision', from: 15, to: 18 },
 ]
 
 export const questionsFor = (step) => QUESTIONS.filter((q) => q.n >= step.from && q.n <= step.to)
@@ -94,6 +102,6 @@ export const questionsFor = (step) => QUESTIONS.filter((q) => q.n >= step.from &
 export function isValid(q, value) {
   const v = (value ?? '').trim()
   if (q.type === 'choice') return q.options.includes(v)
-  if (q.type === 'link') return q.pattern.test(v)
+  if (q.pattern) return q.pattern.test(v)
   return v.length >= q.min && v.length <= q.max
 }

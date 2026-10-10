@@ -68,7 +68,7 @@ Free limits: 50k reads / 20k writes per day, 1 GB database, 10 GB hosting bandwi
 `.env` is committed on purpose: Firebase web config only identifies the project and is public in every Firebase site. `firestore.rules` is what protects the data.
 
 ### What the rules enforce
-- Anyone can **create** an application, but only a well-formed `pending` one (all 17 answers, length limits, valid Streamable/YouTube and Discord links).
+- Anyone can **create** an application, but only a well-formed `pending` one (all 18 answers, length limits, valid Streamable/YouTube and Discord links).
 - Only the 10 admins can **read** applications.
 - An admin can approve/deny a **pending** application once. `reviewedBy` must equal the signed-in admin's own name and `reviewedAt` must be the server time, so the "Approved by Seim on 10/09/2026 at 4:20 PM" log can't be faked.
 - Each review also writes `decisions/{threadId}` (status + date only). Applicants read that by ID to see their result on the Submit page; they can't read the application itself. The one-at-a-time limit is per browser (localStorage), so it slows spam but doesn't stop someone who clears their site data.
