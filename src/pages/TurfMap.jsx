@@ -123,10 +123,19 @@ export default function TurfMap() {
       p.setLatLng([flip ? Math.min(...lats) : Math.max(...lats), x])
       el.classList.toggle('flip', flip)
     }
-    const raf = requestAnimationFrame(place)
+    // React fills the popup a render after Leaflet opens it, so re-place whenever its size changes.
+    const ro = new ResizeObserver(place)
+    let raf
+    const watch = () => {
+      const wrap = popupRef.current?.getElement()?.querySelector('.leaflet-popup-content-wrapper')
+      if (wrap) ro.observe(wrap)
+      else raf = requestAnimationFrame(watch)
+    }
+    watch()
     map.on('zoomend moveend', place)
     return () => {
       cancelAnimationFrame(raf)
+      ro.disconnect()
       map.off('zoomend moveend', place)
     }
   }, [map, turf])
