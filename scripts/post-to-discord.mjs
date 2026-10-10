@@ -6,7 +6,7 @@ import { cert, initializeApp } from 'firebase-admin/app'
 import { getFirestore } from 'firebase-admin/firestore'
 
 // Threads from before this went live are skipped so old ones don't flood the channels.
-const SINCE = new Date('2026-10-10T00:00:00-04:00')
+const SINCE = new Date('2026-10-09T21:30:00-04:00')
 const DASHBOARD = 'https://backendsman.github.io/IllegalCivHub/#/admin'
 
 const db = getFirestore(initializeApp({ credential: cert(JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT)) }))
