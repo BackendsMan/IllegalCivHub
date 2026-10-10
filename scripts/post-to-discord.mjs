@@ -1,6 +1,6 @@
 // Posts threads to the Illegal Civ Discord. Run by .github/workflows/discord.yml.
 // - SUBMISSIONS_WEBHOOK: every submitted thread, as a summary embed that pings management.
-// - APPROVED_WEBHOOK (forum channel): a new forum post per approved thread, titled with the group name, body = clip link + @thread-holder.
+// - APPROVED_WEBHOOK (forum channel): a new forum post per approved thread, titled "<group> - <Type> Tier 1", body = clip link + @thread-holder.
 // Also needs FIREBASE_SERVICE_ACCOUNT (service account key JSON). All three are GitHub secrets.
 import { cert, initializeApp } from 'firebase-admin/app'
 import { getFirestore } from 'firebase-admin/firestore'
@@ -9,6 +9,8 @@ import { QUESTIONS } from '../src/questions.js'
 // Threads from before this went live are skipped so old ones don't flood the channels.
 const SINCE = new Date('2026-10-09T21:30:00-04:00')
 const DASHBOARD = 'https://backendsman.github.io/IllegalCivHub/#/admin'
+// New groups start at Tier 1; this is the suffix on their forum post title ("SOA - Weapons Tier 1").
+const TIER = { 'Car Group': 'Cars Tier 1', 'Fraud Group': 'Fraud Tier 1', 'Weapon Group': 'Weapons Tier 1', 'Drug Group': 'Drugs Tier 1' }
 // Illegal Civ Management roles pinged on every new submission.
 const MANAGEMENT_ROLES = ['1551557569053597751', '1551557569053597749', '1551557569053597748', '1551557569053597747']
 
@@ -81,7 +83,7 @@ for (const d of snap.docs) {
     // Only the thread-holder's ID is allowed to ping (older threads have no ID, so no ping).
     const id = t.threadHolderId
     await post(process.env.APPROVED_WEBHOOK, {
-      thread_name: t.groupName.slice(0, 100),
+      thread_name: `${t.groupName.slice(0, 80)} - ${TIER[t.groupType]}`,
       content: id ? `${t.threadLink}\n<@${id}>` : t.threadLink,
       allowed_mentions: { users: id ? [id] : [] },
     })
