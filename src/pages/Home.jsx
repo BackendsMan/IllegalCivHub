@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
+import { collection, limit, onSnapshot, query, where } from 'firebase/firestore'
+import { db } from '../firebase'
 import { useAuth } from '../useAuth'
 import { Icon, LOGO, MotionLink, Page, ThemeToggle, backgrounds, btnGhost, btnPrimary, hover } from '../ui'
 
@@ -54,6 +56,11 @@ function Slideshow() {
 
 export default function Home() {
   const user = useAuth()
+  const [pending, setPending] = useState(false)
+  useEffect(() => {
+    if (!user) return setPending(false)
+    return onSnapshot(query(collection(db, 'threads'), where('status', '==', 'pending'), limit(1)), (s) => setPending(!s.empty), () => setPending(false))
+  }, [user])
   return (
     <Page className="flex flex-col overflow-hidden">
       <Slideshow />
@@ -62,6 +69,12 @@ export default function Home() {
         <ThemeToggle />
         <MotionLink {...hover} to={user ? '/admin' : '/login'} className={`${btnGhost} px-4 py-2.5`}>
           <Icon name={user ? 'grid' : 'lock'} className="size-4" />
+          {pending && (
+            <span className="relative flex size-2.5" role="img" aria-label="New threads to review">
+              <span className="absolute inset-0 animate-ping rounded-full bg-accent opacity-75" />
+              <span className="relative size-2.5 rounded-full bg-accent shadow-glow" />
+            </span>
+          )}
           {user ? 'Dashboard' : 'Management Login'}
         </MotionLink>
       </header>

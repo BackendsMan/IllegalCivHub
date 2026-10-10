@@ -17,6 +17,14 @@ export const field =
   'w-full rounded-lg border border-white/10 bg-ink-900/80 px-4 py-3 text-sm text-zinc-100 placeholder:text-zinc-600 outline-none transition focus:border-accent/70 focus:ring-2 focus:ring-accent/20'
 export const card = 'rounded-2xl border border-white/[0.07] bg-ink-900/70 backdrop-blur-xl'
 
+// "10/09/2026 at 4:20 PM"
+export const stamp = (ts) => {
+  const d = ts?.toDate()
+  if (!d) return '…'
+  const date = d.toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric' })
+  return `${date} at ${d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}`
+}
+
 export const hover = { whileHover: { scale: 1.04 }, whileTap: { scale: 0.97 } }
 export const MotionLink = motion.create(Link)
 

@@ -1,0 +1,25 @@
+# Every 5 minutes: posts new submissions to one Discord channel and approved threads to the forum channel.
+# Secrets: FIREBASE_SERVICE_ACCOUNT, SUBMISSIONS_WEBHOOK, APPROVED_WEBHOOK.
+name: Post threads to Discord
+
+on:
+  schedule:
+    - cron: '*/5 * * * *'
+  workflow_dispatch:
+
+concurrency: discord
+
+jobs:
+  post:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm install --no-save --no-package-lock firebase-admin
+      - run: node scripts/post-to-discord.mjs
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          SUBMISSIONS_WEBHOOK: ${{ secrets.SUBMISSIONS_WEBHOOK }}
+          APPROVED_WEBHOOK: ${{ secrets.APPROVED_WEBHOOK }}

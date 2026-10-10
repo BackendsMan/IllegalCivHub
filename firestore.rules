@@ -55,5 +55,18 @@ service cloud.firestore {
 
       allow delete: if false;
     }
+
+    // Status-only mirror of a reviewed thread, so applicants can see their decision without reading the application.
+    // Doc ID = the random thread ID, which only the applicant's browser and admins know.
+    match /decisions/{id} {
+      allow get: if true;
+      allow list: if false;
+      allow create: if isAdmin()
+        && request.resource.data.keys().hasOnly(['status', 'reviewedAt'])
+        && request.resource.data.status == getAfter(/databases/$(database)/documents/threads/$(id)).data.status
+        && request.resource.data.status in ['approved', 'denied']
+        && request.resource.data.reviewedAt == request.time;
+      allow update, delete: if false;
+    }
   }
 }

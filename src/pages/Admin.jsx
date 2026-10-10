@@ -2,21 +2,13 @@ import { useEffect, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { Link } from 'react-router'
 import { signOut } from 'firebase/auth'
-import { collection, doc, onSnapshot, orderBy, query, serverTimestamp, updateDoc } from 'firebase/firestore'
+import { collection, doc, onSnapshot, orderBy, query, serverTimestamp, writeBatch } from 'firebase/firestore'
 import { auth, db } from '../firebase'
 import { QUESTIONS } from '../questions'
 import { useAuth } from '../useAuth'
-import { Icon, Page, ThemeToggle, btnGhost, card, hover } from '../ui'
+import { Icon, Page, ThemeToggle, btnGhost, card, hover, stamp } from '../ui'
 
 const FILTERS = ['pending', 'approved', 'denied', 'all']
-
-// "10/09/2026 at 4:20 PM"
-const stamp = (ts) => {
-  const d = ts?.toDate()
-  if (!d) return '…'
-  const date = d.toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric' })
-  return `${date} at ${d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}`
-}
 
 const BADGE = {
   pending: 'bg-zinc-500/15 text-zinc-300',
@@ -33,7 +25,11 @@ function Thread({ t, me }) {
     setBusy(true)
     try {
       // firestore.rules require reviewedBy to match the signed-in admin's name, so this log can't be spoofed.
-      await updateDoc(doc(db, 'threads', t.id), { status, reviewedBy: me, reviewedAt: serverTimestamp() })
+      // decisions/{id} is the public status-only copy the applicant polls (they can't read the thread itself).
+      const batch = writeBatch(db)
+      batch.update(doc(db, 'threads', t.id), { status, reviewedBy: me, reviewedAt: serverTimestamp() })
+      batch.set(doc(db, 'decisions', t.id), { status, reviewedAt: serverTimestamp() })
+      await batch.commit()
     } catch (e) {
       alert(`Failed: ${e.message}`)
     } finally {

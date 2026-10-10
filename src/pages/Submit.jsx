@@ -1,10 +1,10 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 import { Link } from 'react-router'
-import { addDoc, collection, serverTimestamp } from 'firebase/firestore'
+import { addDoc, collection, doc, onSnapshot, serverTimestamp } from 'firebase/firestore'
 import { db, firebaseReady } from '../firebase'
 import { QUESTIONS, STEPS, isValid, questionsFor } from '../questions'
-import { Icon, Notice, Page, PageHeader, backgrounds, btnGhost, btnPrimary, card, field, hover } from '../ui'
+import { Icon, Notice, Page, PageHeader, backgrounds, btnGhost, btnPrimary, card, field, hover, stamp } from '../ui'
 
 function Question({ q, children, count, error }) {
   return (
@@ -23,11 +23,49 @@ function Question({ q, children, count, error }) {
   )
 }
 
+// This browser's latest application: { id, groupName }.
+// ponytail: per-browser limit, clearing site data gets around it; tie to a Discord login if spam gets real.
+const MINE = 'myThread'
+function loadMine() {
+  try {
+    return JSON.parse(localStorage.getItem(MINE))
+  } catch {
+    return null
+  }
+}
+function saveMine(v) {
+  try {
+    v ? localStorage.setItem(MINE, JSON.stringify(v)) : localStorage.removeItem(MINE)
+  } catch {}
+}
+
+const VIEWS = {
+  pending: { icon: 'file', tone: 'bg-zinc-500/15 text-zinc-300', title: 'Application under review' },
+  approved: { icon: 'check', tone: 'bg-active/15 text-active', title: 'Application approved' },
+  denied: { icon: 'x', tone: 'bg-accent/15 text-accent', title: 'Application denied' },
+}
+
 export default function Submit() {
   const [answers, setAnswers] = useState({})
   const [tried, setTried] = useState(false)
-  const [status, setStatus] = useState('idle') // idle | saving | done | error
+  const [status, setStatus] = useState('idle') // idle | saving | error
   const [error, setError] = useState('')
+  const [mine, setMine] = useState(loadMine)
+  const [decision, setDecision] = useState() // undefined loading, null still pending, else { status, reviewedAt }
+
+  useEffect(() => {
+    if (!mine || !db) return
+    return onSnapshot(doc(db, 'decisions', mine.id), (s) => setDecision(s.exists() ? s.data() : null), () => setDecision(null))
+  }, [mine?.id])
+
+  function startNew() {
+    saveMine(null)
+    setMine(null)
+    setDecision(undefined)
+    setAnswers({})
+    setTried(false)
+    setStatus('idle')
+  }
 
   const set = (id) => (e) => setAnswers((a) => ({ ...a, [id]: e.target.value }))
   const busy = status === 'saving'
@@ -50,12 +88,16 @@ export default function Submit() {
     setError('')
     setStatus('saving')
     try {
-      await addDoc(collection(db, 'threads'), {
+      const ref = await addDoc(collection(db, 'threads'), {
         ...Object.fromEntries(QUESTIONS.map((q) => [q.id, (q.normalize ?? String)(answers[q.id].trim())])),
         status: 'pending',
         createdAt: serverTimestamp(),
       })
-      setStatus('done')
+      const v = { id: ref.id, groupName: answers.groupName.trim() }
+      saveMine(v)
+      setDecision(undefined)
+      setMine(v)
+      window.scrollTo(0, 0)
     } catch (e) {
       setError(e.message)
       setStatus('error')
@@ -88,7 +130,9 @@ export default function Submit() {
     )
   }
 
-  if (status === 'done')
+  if (mine) {
+    if (decision === undefined) return <Page bg={backgrounds[2] ?? backgrounds[0]} />
+    const view = VIEWS[decision?.status ?? 'pending']
     return (
       <Page bg={backgrounds[2] ?? backgrounds[0]} className="grid place-items-center px-4">
         <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className={`${card} max-w-md p-10 text-center`}>
@@ -96,16 +140,25 @@ export default function Submit() {
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
             transition={{ type: 'spring', delay: 0.15 }}
-            className="mx-auto grid size-16 place-items-center rounded-full bg-active/15 text-active"
+            className={`mx-auto grid size-16 place-items-center rounded-full ${view.tone}`}
           >
-            <Icon name="check" className="size-8" />
+            <Icon name={view.icon} className="size-8" />
           </motion.div>
-          <h1 className="mt-6 text-2xl font-extrabold tracking-tight">Application submitted</h1>
-          <p className="mt-3 text-zinc-400">Illegal Civ Management will review {answers.groupName}. Keep logging your interactions in the meantime.</p>
-          <Link to="/" className={`${btnGhost} mt-8`}>Back to hub</Link>
+          <p className="mt-6 text-xs font-semibold uppercase tracking-[0.25em] text-accent">Your thread status</p>
+          <h1 className="mt-2 text-2xl font-extrabold tracking-tight">{view.title}</h1>
+          <p className="mt-3 text-zinc-400">
+            {decision
+              ? `${mine.groupName} was ${decision.status} on ${stamp(decision.reviewedAt)}. You can submit a new application.`
+              : `Illegal Civ Management is reviewing ${mine.groupName}. You can submit another application once this one is approved or denied.`}
+          </p>
+          <div className="mt-8 flex flex-wrap justify-center gap-3">
+            <Link to="/" className={btnGhost}>Back to hub</Link>
+            {decision && <button onClick={startNew} className={btnPrimary}>Submit a new application</button>}
+          </div>
         </motion.div>
       </Page>
     )
+  }
 
   return (
     <Page bg={backgrounds[2] ?? backgrounds[0]}>

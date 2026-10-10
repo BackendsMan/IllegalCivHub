@@ -71,8 +71,18 @@ Free limits: 50k reads / 20k writes per day, 1 GB database, 10 GB hosting bandwi
 - Anyone can **create** an application, but only a well-formed `pending` one (all 17 answers, length limits, valid Streamable/YouTube and Discord links).
 - Only the 10 admins can **read** applications.
 - An admin can approve/deny a **pending** application once. `reviewedBy` must equal the signed-in admin's own name and `reviewedAt` must be the server time, so the "Approved by Seim on 10/09/2026 at 4:20 PM" log can't be faked.
+- Each review also writes `decisions/{threadId}` (status + date only). Applicants read that by ID to see their result on the Submit page; they can't read the application itself. The one-at-a-time limit is per browser (localStorage), so it slows spam but doesn't stop someone who clears their site data.
 
 Adding or removing an admin: update `src/admins.js` **and** the email list in `firestore.rules`, redeploy rules, re-run the seed script (temporarily re-tick *Enable create (sign-up)* first, then untick it again).
+
+### Discord posts
+
+`.github/workflows/discord.yml` runs every 5 minutes. It posts every new submission to one channel, and opens a forum post for every approved thread in the forum channel (title: group name - group type, body: the clip link, which Discord embeds). It needs three repo secrets (GitHub → Settings → Secrets and variables → Actions):
+- `SUBMISSIONS_WEBHOOK`: submissions channel → Edit Channel → Integrations → Webhooks → New Webhook → Copy Webhook URL.
+- `APPROVED_WEBHOOK`: same, on the forum channel.
+- `FIREBASE_SERVICE_ACCOUNT`: Firebase console → Project settings → Service accounts → Generate new private key; paste the whole JSON file.
+
+Never commit any of them. GitHub pauses scheduled workflows after 60 days with no commits; re-enable it from the Actions tab.
 
 ## Swapping content
 
