@@ -46,13 +46,13 @@ export const QUESTIONS = [
     label: 'Provide a streamable link of your Illegal Civilian Group Thread.',
     hint: 'Any video link works: Streamable, YouTube, Medal, Google Drive, Twitch, etc.',
   },
+  { id: 'threadHolder', type: 'short', min: 1, max: 100, label: 'Discord of Thread-holder.' },
   {
-    id: 'threadHolder', type: 'short', max: 20,
+    id: 'threadHolderId', type: 'short', max: 20,
     pattern: /^\d{17,20}$/,
     placeholder: '123456789012345678',
     error: 'Must be the 17–20 digit Discord user ID, not a username.',
-    label: 'Discord User ID of Thread-holder.',
-    hint: 'Discord → Settings → Advanced → turn on Developer Mode. Then right-click the thread-holder → Copy User ID. Used to @ them when the thread is approved.',
+    label: "Thread-holder's Discord User ID.",
   },
   { id: 'leadership', type: 'short', min: 1, max: 300, label: 'Leadership' },
   { id: 'highCouncil', type: 'short', min: 1, max: 300, label: 'High-Council' },
@@ -92,8 +92,8 @@ export const QUESTIONS = [
 
 export const STEPS = [
   { title: 'Background', from: 1, to: 6 },
-  { title: 'Group', from: 7, to: 13 },
-  { title: 'Vision', from: 14, to: 17 },
+  { title: 'Group', from: 7, to: 14 },
+  { title: 'Vision', from: 15, to: 18 },
 ]
 
 export const questionsFor = (step) => QUESTIONS.filter((q) => q.n >= step.from && q.n <= step.to)
