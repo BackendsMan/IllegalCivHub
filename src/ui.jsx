@@ -44,6 +44,9 @@ const ICONS = {
   sun: 'M12 4V2 M12 22v-2 M4.9 4.9L3.5 3.5 M20.5 20.5l-1.4-1.4 M4 12H2 M22 12h-2 M4.9 19.1l-1.4 1.4 M20.5 3.5l-1.4 1.4 M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8z',
   moon: 'M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z',
   down: 'M12 5v14 M6 13l6 6 6-6',
+  search: 'M11 4a7 7 0 1 0 0 14 7 7 0 0 0 0-14z M20 20l-4-4',
+  tag: 'M3 12V4a1 1 0 0 1 1-1h8l9 9-9 9z M7.5 7.5h.01',
+  layers: 'M12 3l9 5-9 5-9-5z M3 13l9 5 9-5',
 }
 
 export function Icon({ name, className = 'size-5' }) {
