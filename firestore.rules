@@ -53,7 +53,9 @@ service cloud.firestore {
         && request.resource.data.reviewedBy == request.auth.token.name
         && request.resource.data.reviewedAt == request.time;
 
-      allow delete: if false;
+      // Only Nas, and only decided threads (deleting a pending one would leave its applicant stuck "under review").
+      allow delete: if request.auth != null && request.auth.token.email == 'nas@tfbhub.local'
+        && resource.data.status in ['approved', 'denied'];
     }
 
     // Status-only mirror of a reviewed thread, so applicants can see their decision without reading the application.

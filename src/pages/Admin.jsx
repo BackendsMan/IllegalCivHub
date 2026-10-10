@@ -2,8 +2,9 @@ import { useEffect, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { Link } from 'react-router'
 import { signOut } from 'firebase/auth'
-import { collection, doc, onSnapshot, orderBy, query, serverTimestamp, writeBatch } from 'firebase/firestore'
+import { collection, deleteDoc, doc, onSnapshot, orderBy, query, serverTimestamp, writeBatch } from 'firebase/firestore'
 import { auth, db } from '../firebase'
+import { CAN_DELETE } from '../admins'
 import { QUESTIONS } from '../questions'
 import { useAuth } from '../useAuth'
 import { Icon, Page, ThemeToggle, btnGhost, card, hover, stamp } from '../ui'
@@ -19,6 +20,17 @@ const BADGE = {
 
 function Thread({ t, me }) {
   const [busy, setBusy] = useState(false)
+
+  async function remove() {
+    if (!confirm(`Delete "${t.groupName}" permanently? This can't be undone.`)) return
+    setBusy(true)
+    try {
+      await deleteDoc(doc(db, 'threads', t.id))
+    } catch (e) {
+      alert(`Failed: ${e.message}`)
+      setBusy(false)
+    }
+  }
 
   async function review(status) {
     if (!confirm(`${status === 'approved' ? 'Approve' : 'Deny'} "${t.groupName}"? This can't be undone.`)) return
@@ -101,12 +113,19 @@ function Thread({ t, me }) {
             </motion.button>
           </div>
         ) : (
-          <p className="flex items-center gap-2 text-sm text-zinc-300">
-            <Icon name={t.status === 'approved' ? 'check' : 'x'} className={`size-4 ${t.status === 'approved' ? 'text-active' : 'text-accent'}`} />
-            <span>
-              <span className="capitalize">{t.status}</span> by <strong className="text-white">{t.reviewedBy}</strong> on {stamp(t.reviewedAt)}
-            </span>
-          </p>
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <p className="flex items-center gap-2 text-sm text-zinc-300">
+              <Icon name={t.status === 'approved' ? 'check' : 'x'} className={`size-4 ${t.status === 'approved' ? 'text-active' : 'text-accent'}`} />
+              <span>
+                <span className="capitalize">{t.status}</span> by <strong className="text-white">{t.reviewedBy}</strong> on {stamp(t.reviewedAt)}
+              </span>
+            </p>
+            {me === CAN_DELETE && (
+              <button disabled={busy} onClick={remove} className="inline-flex items-center gap-2 rounded-lg border border-white/10 px-4 py-2 text-sm font-semibold text-zinc-400 transition hover:border-accent/50 hover:text-accent disabled:opacity-40">
+                <Icon name="x" className="size-4" /> Delete
+              </button>
+            )}
+          </div>
         )}
       </div>
     </motion.article>
