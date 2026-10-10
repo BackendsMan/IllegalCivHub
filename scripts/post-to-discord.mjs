@@ -52,8 +52,8 @@ for (const d of snap.docs) {
 
   if (t.status === 'approved' && !t.postedForum) {
     // thread_name makes the webhook open a new forum post; Discord embeds the clip link on its own.
-    // Only the thread-holder's ID is allowed to ping (older threads have no ID, so no ping).
-    const id = t.threadHolderId
+    // Only the thread-holder's ID is allowed to ping (older threads have a username there, so no ping).
+    const id = /^\d{17,20}$/.test(t.threadHolder) ? t.threadHolder : null
     await post(process.env.APPROVED_WEBHOOK, {
       thread_name: t.groupName.slice(0, 100),
       content: id ? `${t.threadLink}\n<@${id}>` : t.threadLink,
