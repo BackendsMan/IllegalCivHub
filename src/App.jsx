@@ -5,6 +5,7 @@ import Home from './pages/Home'
 import Roe from './pages/Roe'
 import Submit from './pages/Submit'
 import TurfMap from './pages/TurfMap'
+import Spin from './pages/Spin'
 import Login from './pages/Login'
 import Admin from './pages/Admin'
 
@@ -24,6 +25,7 @@ export default function App() {
           <Route path="/roe" element={<Roe />} />
           <Route path="/submit" element={<Submit />} />
           <Route path="/map" element={<TurfMap />} />
+          <Route path="/spin" element={<Spin />} />
           <Route path="/login" element={<Login />} />
           <Route path="/admin" element={<RequireAdmin><Admin /></RequireAdmin>} />
           <Route path="*" element={<Navigate to="/" replace />} />

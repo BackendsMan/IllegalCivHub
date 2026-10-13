@@ -9,6 +9,7 @@ const ACTIONS = [
   { to: '/roe', label: 'Browse Illegal Civ ROE', icon: 'shield', primary: true },
   { to: '/submit', label: 'Submit Thread Submissions', icon: 'file' },
   { to: '/map', label: 'Look at Illegal Civ Turfs', icon: 'map' },
+  { to: '/spin', label: 'Weapon Spin', icon: 'dice' },
 ]
 
 const rise = {
