@@ -25,7 +25,7 @@ export default function App() {
           <Route path="/roe" element={<Roe />} />
           <Route path="/submit" element={<Submit />} />
           <Route path="/map" element={<TurfMap />} />
-          <Route path="/spin" element={<Spin />} />
+          <Route path="/spin" element={<Spin back />} />
           <Route path="/login" element={<Login />} />
           <Route path="/admin" element={<RequireAdmin><Admin /></RequireAdmin>} />
           <Route path="*" element={<Navigate to="/" replace />} />
