@@ -16,17 +16,5 @@ export const shuffle = (a) => {
   return a
 }
 
-// Balanced: draw from a shuffled bag, refill when empty. Every gun comes up equally often (counts differ by at most 1)
-// and none repeats back-to-back across a refill.
-export function draw(pool, n) {
-  const out = []
-  let bag = []
-  while (out.length < n) {
-    if (!bag.length) {
-      bag = shuffle(pool)
-      if (bag[0] === out.at(-1) && bag.length > 1) bag.push(bag.shift())
-    }
-    out.push(bag.shift())
-  }
-  return out
-}
+// Fair: every spin is an independent, equal-odds pick from the pool, so the same gun can come up again (even back-to-back).
+export const draw = (pool, n) => Array.from({ length: n }, () => pool[rand(pool.length)])

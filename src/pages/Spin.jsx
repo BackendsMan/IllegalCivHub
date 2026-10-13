@@ -234,7 +234,7 @@ export default function Spin({ back }) {
             Spin for your <span style={{ color }}>piece</span>
           </h1>
           <p className="mx-auto mt-4 max-w-xl text-sm leading-relaxed text-zinc-400 sm:text-base">
-            Pick a tier, choose how many spins, and let it roll. Every gun in the tier comes up evenly — no rigged odds.
+            Pick a tier, choose how many spins, and let it roll. Every gun in the tier has the same odds on every spin — no rigged odds.
           </p>
         </header>
 

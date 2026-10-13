@@ -3,14 +3,15 @@ import assert from 'node:assert'
 import { draw } from '../src/draw.js'
 
 const pool = ['a', 'b', 'c', 'd', 'e']
-for (const n of [1, 5, 7, 23, 100]) {
-  const r = draw(pool, n)
-  const v = pool.map((g) => r.filter((x) => x === g).length)
-  assert(Math.max(...v) - Math.min(...v) <= 1, `unbalanced n=${n} ${v}`)
-  assert(r.every((g, i) => g !== r[i - 1]), `back-to-back repeat n=${n}`)
+assert.equal(draw(pool, 7).length, 7)
+// every gun equally likely, on every spin position
+const N = 100000
+for (const pos of [0, 1, 9]) {
+  const c = {}
+  for (let i = 0; i < N / 5; i++) { const g = draw(pool, 10)[pos]; c[g] = (c[g] || 0) + 1 }
+  console.log(`spin #${pos + 1} counts (expect ~${N / 25} each):`, c)
+  for (const g of pool) assert(Math.abs(c[g] - N / 25) < 600, `spin #${pos + 1}: ${g} not uniform`)
 }
-const first = {}
-for (let i = 0; i < 50000; i++) { const g = draw(pool, 1)[0]; first[g] = (first[g] || 0) + 1 }
-console.log('first-pick counts (expect ~10000 each):', first)
-for (const c of Object.values(first)) assert(Math.abs(c - 10000) < 500, 'first pick not uniform')
+// repeats must be possible (independent spins)
+assert(Array.from({ length: 200 }, () => draw(pool, 10)).some((r) => r.some((g, i) => g === r[i - 1])), 'no repeats ever')
 console.log('ok')
