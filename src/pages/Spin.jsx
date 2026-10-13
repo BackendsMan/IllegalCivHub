@@ -125,7 +125,6 @@ export default function Spin({ back }) {
   }
 
   const tally = Object.entries(results.reduce((m, g) => ((m[g] = (m[g] || 0) + 1), m), {})).sort((a, b) => b[1] - a[1])
-  const latest = results.at(-1)
 
   return (
     <Page className="px-4 pb-24 sm:px-6">
@@ -231,17 +230,6 @@ export default function Spin({ back }) {
             {busy && <button onClick={skipAnim} className={`${btnGhost} h-12 px-5`}>Skip</button>}
           </div>
         </section>
-
-        {latest && (
-          <motion.section key={results.length} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} className="mt-8 flex items-center gap-5 rounded-3xl border bg-ink-900/80 p-4 sm:p-5" style={{ borderColor: `${color}66`, boxShadow: `0 0 50px -20px ${color}` }}>
-            <Gun name={latest} className="size-28 shrink-0 sm:size-36" style={{ boxShadow: `0 0 30px -6px ${color}` }} />
-            <div className="min-w-0">
-              <p className="text-xs font-bold tracking-[0.25em] uppercase" style={{ color }}>{busy ? `Pull #${results.length}` : 'Last pull'} · {tier}</p>
-              <h2 className="mt-1 text-2xl font-black tracking-tight sm:text-4xl">{latest}</h2>
-              <p className="mt-1 text-sm text-zinc-500">{results.length} of {n} spun</p>
-            </div>
-          </motion.section>
-        )}
 
         {results.length > 0 && (
           <section className="mt-6">
