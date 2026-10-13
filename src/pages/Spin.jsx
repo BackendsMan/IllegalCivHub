@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { animate, motion, useMotionValue } from 'framer-motion'
+import { AnimatePresence, animate, motion, useMotionValue } from 'framer-motion'
 import { draw, shuffle } from '../draw'
 import { Icon, Page, ThemeToggle, btnGhost, field } from '../ui'
 
@@ -29,6 +29,92 @@ const STARS = {
   'Glock 43 Mos': 4, 'Glock 45 Mos': 4, 'FN 57 2.0': 4, 'FNX 45': 4,
 }
 
+const RC = { 1: '#9aa3ad', 2: '#62d84e', 3: '#3aa0ff', 4: '#b45cf0' }
+const RNAME = { 1: 'Common', 2: 'Uncommon', 3: 'Rare', 4: 'Epic' }
+
+const DESC = {
+  'Canik TP9': 'Full-size striker-fired pistol with a big magazine and a light, crisp trigger. A solid starter that is easy to keep on target.',
+  'Walther P88': 'Old-school double-stack classic with a smooth action. Reliable and steady, but it shows its age next to the newer pieces.',
+  'Glock 19x': 'Compact slide on a full-size grip, the best of both worlds. Balanced handling and a dependable all-rounder.',
+  'Glock 19': 'The do-everything compact. Easy to carry, easy to shoot, and rarely lets you down.',
+  'Glock 43': 'Slim single-stack built for concealment. Light and quick to draw, with a smaller magazine to match.',
+  'Glock 23': 'Compact frame chambered for a heavier round. Snappier than a 19 but hits noticeably harder.',
+  'HK45': 'Tough, accurate and built like a tank. Heavy slide and a calm recoil impulse make it easy to control.',
+  'Sig P320': 'Modular striker-fired pistol with a crisp trigger and strong accuracy. Dependable in any situation.',
+  'Olive G17': 'The classic full-size Glock in a low-visibility olive finish. High capacity and steady handling.',
+  'Olive G19x': 'Olive-finished crossover Glock with a full grip and compact slide. Quick, balanced and quiet on the eyes.',
+  'Glock 45': 'Full-size grip with a compact slide and optic cut. Smooth recoil and quick follow-up shots.',
+  'Glock G17 Gen5': 'Latest-generation full-size Glock with improved grip texture and a smooth trigger. Reliable and accurate.',
+  '1911': 'The legendary single-stack .45. Heavy-hitting and accurate, with a short magazine and a slower pace.',
+  'FN 57 1.0': 'Lightweight, high-capacity pistol with a flat-shooting round and very little recoil. Great at range.',
+  'Glock 43 Mos': 'Slim concealed-carry Glock fitted with a red-dot optic plate. Pinpoint aim in a pocket-sized frame.',
+  'Glock 45 Mos': 'Optic-ready Glock 45 with a weapon light up front. Fast, accurate and ready for anything.',
+  'FN 57 2.0': 'Upgraded FN 57 with a weapon light and tuned internals. Longer effective range and rapid-fire control.',
+  'FNX 45': 'Large-frame .45 with serious stopping power and a big magazine. Heavy, but hits hard and stays controllable.',
+}
+
+// Illustrative stats only: a rarity baseline plus a small steady per-gun offset.
+const hash = (str) => [...str].reduce((h, c) => (h * 31 + c.charCodeAt(0)) >>> 0, 7)
+const STAT_BASE = { Damage: [24, 31, 39, 48], Range: [34, 42, 51, 60], 'Fire rate': [66, 73, 81, 89], Control: [58, 64, 72, 80], Magazine: [12, 15, 17, 21] }
+function statsFor(name) {
+  const r = STARS[name] - 1
+  const h = hash(name)
+  return Object.entries(STAT_BASE).map(([k, v], i) => [k, v[r] + (((h >> (i * 3)) % 7) - 3) * (k === 'Magazine' ? 0.4 : 1)].map((x) => (typeof x === 'number' ? Math.round(x) : x)))
+}
+
+function GunModal({ name, tier, onClose }) {
+  const r = STARS[name]
+  const rc = RC[r]
+  useEffect(() => {
+    const k = (e) => e.key === 'Escape' && onClose()
+    addEventListener('keydown', k)
+    return () => removeEventListener('keydown', k)
+  }, [onClose])
+  return (
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={onClose} className="fixed inset-0 z-50 grid place-items-center bg-black/70 p-4 backdrop-blur-sm">
+      <motion.div
+        role="dialog"
+        aria-label={name}
+        initial={{ opacity: 0, y: 24, scale: 0.96 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        exit={{ opacity: 0, y: 12, scale: 0.97 }}
+        onClick={(e) => e.stopPropagation()}
+        className="relative grid max-h-[92dvh] w-full max-w-3xl gap-6 overflow-y-auto rounded-3xl border bg-ink-900 p-5 sm:grid-cols-[260px_1fr] sm:p-7"
+        style={{ borderColor: `${rc}77`, boxShadow: `0 0 70px -20px ${rc}` }}
+      >
+        <button onClick={onClose} aria-label="Close" className="absolute top-3 right-3 grid size-9 place-items-center rounded-full text-zinc-400 transition hover:bg-white/10 hover:text-white">
+          <Icon name="x" className="size-4" />
+        </button>
+        <Gun name={name} className="aspect-square w-full max-w-64 justify-self-center" style={{ boxShadow: `0 0 36px -8px ${rc}` }} />
+        <div>
+          <p className="text-xs font-bold tracking-[0.25em] uppercase" style={{ color: rc }}>{RNAME[r]} · {'★'.repeat(r)}</p>
+          <h3 className="mt-1 text-3xl font-black tracking-tight">{name}</h3>
+          <div className="mt-2 flex flex-wrap gap-1">
+            {catalog_tiers(name).map((t) => (
+              <span key={t} className="rounded-md px-1.5 py-0.5 text-[10px] font-bold" style={t === tier ? { background: `${COLOR[t]}26`, color: COLOR[t] } : { background: 'rgb(255 255 255 / 0.05)', color: '#71717a' }}>{t}</span>
+            ))}
+          </div>
+          <p className="mt-4 text-sm leading-relaxed text-zinc-400">{DESC[name]}</p>
+          <div className="mt-5 space-y-2.5">
+            {statsFor(name).map(([k, v]) => (
+              <div key={k} className="grid grid-cols-[84px_1fr_32px] items-center gap-3 text-xs">
+                <span className="font-semibold text-zinc-400">{k}</span>
+                <span className="h-2 overflow-hidden rounded-full bg-white/10">
+                  <motion.span initial={{ width: 0 }} animate={{ width: `${Math.min(100, k === 'Magazine' ? v * 3.6 : v)}%` }} transition={{ duration: 0.6, ease: 'easeOut' }} className="block h-full rounded-full" style={{ background: rc }} />
+                </span>
+                <span className="text-right font-bold">{v}</span>
+              </div>
+            ))}
+          </div>
+          <p className="mt-4 text-[11px] text-zinc-600">Stats are for show only and scale with rarity.</p>
+        </div>
+      </motion.div>
+    </motion.div>
+  )
+}
+
+const catalog_tiers = (g) => Object.entries(TIERS).filter(([, guns]) => guns.includes(g)).map(([t]) => t)
+
 function Gun({ name, className = '', style }) {
   return (
     <div className={`relative overflow-hidden rounded-xl bg-ink-800 ${className}`} style={style}>
@@ -49,6 +135,7 @@ export default function Spin({ back }) {
   const [win, setWin] = useState(-1)
   const [busy, setBusy] = useState(false)
   const [progress, setProgress] = useState(0)
+  const [sel, setSel] = useState(null)
   const [cw, setCw] = useState(900)
   const wrap = useRef()
   const x = useMotionValue(0)
@@ -262,7 +349,7 @@ export default function Spin({ back }) {
           <h2 className="mt-2 text-center font-display text-2xl font-extrabold uppercase sm:text-3xl">Can drop in {tier}</h2>
           <div className="mt-12 flex flex-wrap justify-center gap-4">
             {[...pool].sort((x, y) => STARS[x] - STARS[y]).map((g) => (
-              <div key={g} className="basis-[calc(50%-0.5rem)] rounded-2xl border border-white/[0.08] bg-ink-900/70 p-3.5 transition-all hover:-translate-y-1 hover:border-[var(--tc)] sm:basis-[calc(33.333%-0.667rem)] lg:basis-[calc(20%-0.8rem)] xl:basis-[calc(16.666%-0.834rem)]">
+              <button type="button" key={g} onClick={() => setSel(g)} className="basis-[calc(50%-0.5rem)] cursor-pointer rounded-2xl text-left border border-white/[0.08] bg-ink-900/70 p-3.5 transition-all hover:-translate-y-1 hover:border-[var(--tc)] sm:basis-[calc(33.333%-0.667rem)] lg:basis-[calc(20%-0.8rem)] xl:basis-[calc(16.666%-0.834rem)]">
                 <Gun name={g} className="aspect-square" />
                 <div className="mt-4 px-1 pb-1">
                   <div className="text-sm font-bold">{g}</div>
@@ -272,11 +359,12 @@ export default function Spin({ back }) {
                     ))}
                   </div>
                 </div>
-              </div>
+              </button>
             ))}
           </div>
         </section>
       </div>
+    <AnimatePresence>{sel && <GunModal key={sel} name={sel} tier={tier} onClose={() => setSel(null)} />}</AnimatePresence>
     </Page>
   )
 }
