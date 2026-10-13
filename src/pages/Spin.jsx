@@ -106,7 +106,6 @@ function GunModal({ name, tier, onClose }) {
               </div>
             ))}
           </div>
-          <p className="mt-4 text-[11px] text-zinc-600">Stats are for show only and scale with rarity.</p>
         </div>
       </motion.div>
     </motion.div>
