@@ -16,21 +16,21 @@ export const shuffle = (a) => {
   return a
 }
 
-// Fair but not streaky: the first spin is a plain equal-odds pick. A gun that just dropped gets its odds cut (HIT) and wins
-// them back gradually (BACK per spin), so repeats can still happen but 3+ of one gun in 10 spins is ~10%, 4+ is ~0.1%; long-run odds stay equal.
-const HIT = 0.1
-const BACK = 0.12
+// Fair with natural repeats: every spin is a plain equal-odds pick, except that a gun already seen in the last WINDOW spins
+// has its odds cut by how many times it showed up (0 or 1 time: normal, 2: 10%, 3: 0%). So pairs happen at normal random
+// rates, but the same gun can never appear more than 3 times in any 20 spins. Long-run odds stay equal.
+const WINDOW = 20
+const ODDS = [1, 1, 0.1, 0]
 
 export function draw(pool, n) {
-  const w = pool.map(() => 1)
   const out = []
   for (let k = 0; k < n; k++) {
+    const recent = out.slice(-WINDOW)
+    const w = pool.map((g) => ODDS[Math.min(recent.filter((x) => x === g).length, ODDS.length - 1)])
     let r = (rand(1e9) / 1e9) * w.reduce((a, b) => a + b)
     let i = 0
     while (i < w.length - 1 && r >= w[i]) r -= w[i++]
     out.push(pool[i])
-    for (let j = 0; j < w.length; j++) w[j] += (1 - w[j]) * BACK
-    w[i] *= HIT
   }
   return out
 }

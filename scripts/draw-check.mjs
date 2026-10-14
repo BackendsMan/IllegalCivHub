@@ -2,30 +2,33 @@
 import assert from 'node:assert'
 import { draw } from '../src/draw.js'
 
-const pool = Array.from({ length: 11 }, (_, i) => 'g' + i)
-assert.equal(draw(pool, 7).length, 7)
+const maxCount = (r) => Math.max(...Object.values(r.reduce((c, g) => ((c[g] = (c[g] || 0) + 1), c), {})))
+for (const size of [9, 10, 11]) {
+  const pool = Array.from({ length: size }, (_, i) => 'g' + i)
+  assert.equal(draw(pool, 7).length, 7)
 
-// first spin is a plain equal-odds pick
-const first = {}
-for (let i = 0; i < 55000; i++) { const g = draw(pool, 1)[0]; first[g] = (first[g] || 0) + 1 }
-for (const g of pool) assert(Math.abs(first[g] - 5000) < 300, `first pick not uniform: ${g} ${first[g]}`)
+  // first spin is a plain equal-odds pick
+  const first = {}
+  for (let i = 0; i < size * 5000; i++) { const g = draw(pool, 1)[0]; first[g] = (first[g] || 0) + 1 }
+  for (const g of pool) assert(Math.abs(first[g] - 5000) < 300, `first pick not uniform: ${g} ${first[g]}`)
 
-// long-run share stays equal for every gun
-const long = {}
-for (const g of draw(pool, 220000)) long[g] = (long[g] || 0) + 1
-for (const g of pool) assert(Math.abs(long[g] / 2200 - 9.09) < 0.4, `long-run share off: ${g}`)
+  // long-run share stays equal
+  const long = {}
+  for (const g of draw(pool, size * 20000)) long[g] = (long[g] || 0) + 1
+  for (const g of pool) assert(Math.abs(long[g] / (size * 200) - 100 / size) < 0.4, `long-run share off: ${g}`)
 
-// streaks: repeats are possible but 4+ of one gun in 10 spins is very rare
-let repeats = 0, many = 0
-const R = 20000
-for (let t = 0; t < R; t++) {
-  const r = draw(pool, 10)
-  if (r.some((g, i) => g === r[i - 1])) repeats++
-  const c = {}
-  r.forEach((g) => (c[g] = (c[g] || 0) + 1))
-  if (Math.max(...Object.values(c)) >= 4) many++
+  // pairs show up at normal random rates; no gun ever appears 4+ times in 20 spins
+  const R = 20000
+  let pair5 = 0, b2b = 0
+  for (let t = 0; t < R; t++) {
+    if (maxCount(draw(pool, 5)) >= 2) pair5++
+    const r = draw(pool, 20)
+    assert(maxCount(r) <= 3, `4+ of one gun in 20 spins: ${r}`)
+    if (r.some((g, i) => g === r[i - 1])) b2b++
+  }
+  const p5 = (100 * pair5) / R
+  console.log(`${size} guns: pair-in-5-spins ${p5.toFixed(1)}%, back-to-back in 20 spins ${((100 * b2b) / R).toFixed(1)}%`)
+  assert(b2b > 0, 'back-to-back repeats should be possible')
+  assert(p5 > 40, 'pairs should be common')
 }
-console.log(`batches with a back-to-back repeat: ${((100 * repeats) / R).toFixed(1)}%, with 4+ of one gun: ${((100 * many) / R).toFixed(2)}%`)
-assert(repeats > 0, 'repeats should still be possible')
-assert(many / R < 0.005, '4+ of one gun in 10 spins is too common')
 console.log('ok')
