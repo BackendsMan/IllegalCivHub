@@ -6,7 +6,7 @@ service cloud.firestore {
     function isAdmin() {
       return request.auth != null && request.auth.token.email in [
         'jayb@tfbhub.local', 'chris@tfbhub.local', 'aril@tfbhub.local', 'seim@tfbhub.local', 'blaine@tfbhub.local',
-        'walking@tfbhub.local', 'babyj@tfbhub.local', 'nas@tfbhub.local', 'johansei@tfbhub.local', 'pax@tfbhub.local'
+        'walking@tfbhub.local', 'babyj@tfbhub.local', 'nas@tfbhub.local', 'johansei@tfbhub.local', 'pax@tfbhub.local', 'felon@tfbhub.local'
       ];
     }
 
