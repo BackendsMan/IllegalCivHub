@@ -26,6 +26,9 @@ const TURFS = [
   { name: 'TMB / The Motion Boys', photos: shots('tmb', 3), area: 'Queens', color: '#a855f7', points: [[-53.3, 125.4], [-53.3, 128.9], [-59.8, 128.9], [-59.8, 125.4]] },
   { name: 'MulaBoysENT', photos: shots('mulaboys', 2), area: 'Brooklyn', color: '#eab308', points: [[-80.1, 111.9], [-80.1, 115.6], [-84.9, 115.6], [-84.9, 111.9]] },
   { name: 'H.O.E / Hoopers Over Everything', photos: shots('hoe', 3), area: 'Brooklyn', color: '#3b82f6', points: [[-90.7, 117.8], [-90.3, 120.9], [-90.1, 123.7], [-95.9, 123.7], [-95.9, 117.8]] },
+  { name: '7th Block / 7BK', photos: shots('7bk', 2), area: 'Brooklyn', color: '#f97316', points: [[-91.3, 107.2], [-91.3, 112.4], [-96.5, 112.4], [-96.5, 107.2]] },
+  { name: '80z / hoodstars', photos: shots('80z', 2), area: 'Harlem', color: '#06b6d4', points: [[-43.8, 64], [-43.8, 69.6], [-49.3, 69.6], [-49.3, 64]] },
+  { name: 'Brothers For Life', photos: shots('bfl', 1), area: 'Queens', color: '#ec4899', points: [[-60.4, 124.8], [-60.4, 130.2], [-65.8, 130.2], [-65.8, 124.8]] },
 ]
 const slug = (name) => name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
 const center = (pts) => pts.reduce(([a, b], [y, x]) => [a + y / pts.length, b + x / pts.length], [0, 0])
