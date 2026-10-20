@@ -19,6 +19,7 @@ const IMG = {
   'Glock 19': 'glock-19', 'Glock 43': 'glock-43', 'HK45': 'hk45', 'Walther P88': 'walther-p88', 'Sig P320': 'sig-p320',
   'Olive G17': 'olive-g17', 'Olive G19x': 'olive-g19x', '1911': '1911', 'Glock 23': 'glock-23',
   'Glock 43 Mos': 'glock-43-mos', 'Glock 45 Mos': 'glock-45-mos', 'FN 57 1.0': 'fn-57-1', 'FN 57 2.0': 'fn-57-2', 'FNX 45': 'fnx-45',
+  'Binary ARP': 'binary-arp', 'G26 Switch': 'g26-switch', 'G20 Switch': 'g20-switch', 'Glock 19 Switch': 'glock-19-switch', 'Glock Switch': 'glock-switch', 'TEC-9': 'tec-9',
 }
 
 // Rarity (the tile colour / star count in the pictures), used to sort the catalog: 1 grey, 2 green, 3 blue, 4 purple.
