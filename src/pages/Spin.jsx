@@ -4,7 +4,7 @@ import { draw, shuffle } from '../draw'
 import { Icon, Page, ThemeToggle, btnGhost, field } from '../ui'
 
 const TIERS = {
-  'Tier 1': ['Canik TP9', 'Glock 19x', 'Glock G17 Gen5', 'Glock 19', 'Glock 43', 'Glock 23', 'HK45', 'Walther P88', 'Sig P320', 'Olive G17'],
+  'Tier 1': ['Canik TP9', 'Glock 45', 'Glock 19x', 'Glock G17 Gen5', 'Glock 19', 'Glock 43', 'Glock 23', 'HK45', 'Walther P88', 'Sig P320', 'Olive G17'],
   'Tier 1.5': ['FN 57 1.0', 'Glock 45', '1911', 'Olive G19x', 'Glock 19x', 'Glock G17 Gen5', 'Glock 19', 'Glock 43', 'Glock 23', 'HK45', 'Binary ARP', 'G26 Switch'],
   'Tier 2': ['FN 57 1.0', 'Glock 45', 'Olive G19x', 'Glock 43 Mos', 'Glock 45 Mos', 'FN 57 2.0', 'FNX 45', '1911', 'G20 Switch', 'Glock 19 Switch', 'Glock Switch', 'Binary ARP', 'TEC-9', 'G26 Switch'],
 }
@@ -127,7 +127,7 @@ function Gun({ name, className = '', style }) {
       {IMG[name] ? (
         <img src={`${import.meta.env.BASE_URL}guns/${IMG[name]}.png`} alt={name} draggable="false" className="absolute inset-0 size-full object-cover" />
       ) : (
-        <div className="grid size-full place-items-center p-2 text-center text-xs font-bold text-zinc-400">{name}</div>
+        <div className="grid size-full place-content-center gap-1 p-2 text-center text-xs font-bold text-zinc-400">{name}<span className="text-[10px] font-semibold text-zinc-600">No image</span></div>
       )}
     </div>
   )
