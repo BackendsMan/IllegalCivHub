@@ -4,9 +4,9 @@ import { draw, shuffle } from '../draw'
 import { Icon, Page, ThemeToggle, btnGhost, field } from '../ui'
 
 const TIERS = {
-  'Tier 1': ['Canik TP9', 'Glock 45', 'Glock 19x', 'Glock G17 Gen5', 'Glock 19', 'Glock 43', 'Glock 23', 'HK45', 'Walther P88', 'Sig P320', 'Olive G17'],
-  'Tier 1.5': ['FN 57 1.0', '1911', 'Olive G19x', 'Glock 45', 'Glock 19x', 'Glock G17 Gen5', 'Glock 19', 'Glock 43', 'Glock 23', 'HK45'],
-  'Tier 2': ['FN 57 1.0', 'Glock 45', 'Glock 19', 'Olive G19x', 'Glock 43 Mos', 'Glock 45 Mos', 'FN 57 2.0', 'FNX 45', '1911'],
+  'Tier 1': ['Canik TP9', 'Glock 19x', 'Glock G17 Gen5', 'Glock 19', 'Glock 43', 'Glock 23', 'HK45', 'Walther P88', 'Sig P320', 'Olive G17'],
+  'Tier 1.5': ['FN 57 1.0', 'Glock 45', '1911', 'Olive G19x', 'Glock 19x', 'Glock G17 Gen5', 'Glock 19', 'Glock 43', 'Glock 23', 'HK45', 'Binary ARP', 'G26 Switch'],
+  'Tier 2': ['FN 57 1.0', 'Glock 45', 'Olive G19x', 'Glock 43 Mos', 'Glock 45 Mos', 'FN 57 2.0', 'FNX 45', '1911', 'G20 Switch', 'Glock 19 Switch', 'Glock Switch', 'Binary ARP', 'TEC-9', 'G26 Switch'],
 }
 // Tier colours match the in-game tile colours (grey / green / blue).
 const COLOR = { 'Tier 1': '#aab4c0', 'Tier 1.5': '#62d84e', 'Tier 2': '#3aa0ff' }
@@ -27,6 +27,7 @@ const STARS = {
   'Glock 19x': 2, 'Glock 19': 2, 'Glock 43': 2, 'Glock 23': 2, 'HK45': 2, 'Sig P320': 2, 'Olive G17': 2, 'Olive G19x': 2,
   'Glock 45': 3, 'Glock G17 Gen5': 3, '1911': 3, 'FN 57 1.0': 3,
   'Glock 43 Mos': 4, 'Glock 45 Mos': 4, 'FN 57 2.0': 4, 'FNX 45': 4,
+  'Binary ARP': 4, 'G26 Switch': 4, 'G20 Switch': 4, 'Glock 19 Switch': 4, 'Glock Switch': 4, 'TEC-9': 4,
 }
 
 const RC = { 1: '#9aa3ad', 2: '#62d84e', 3: '#3aa0ff', 4: '#b45cf0' }
@@ -51,6 +52,12 @@ const DESC = {
   'Glock 45 Mos': 'Optic-ready Glock 45 with a weapon light up front. Fast, accurate and ready for anything.',
   'FN 57 2.0': 'Upgraded FN 57 with a weapon light and tuned internals. Longer effective range and rapid-fire control.',
   'FNX 45': 'Large-frame .45 with serious stopping power and a big magazine. Heavy, but hits hard and stays controllable.',
+  'Binary ARP': 'Pistol-format AR build with a binary trigger: one pull on the way down, one on release. Brutal rate of fire if you can hold it.',
+  'G26 Switch': 'Subcompact Glock fitted with an auto switch. Tiny and easy to hide, but it empties fast and climbs hard.',
+  'G20 Switch': 'Big-bore Glock with an auto switch. Heavy recoil and a heavy punch, fully automatic.',
+  'Glock 19 Switch': 'The everyday compact converted to full auto. Familiar handling with a much higher cyclic rate.',
+  'Glock Switch': 'Standard Glock with an auto switch. Cheap, loud and relentless, but hard to keep on target.',
+  'TEC-9': 'Blocky, cheap machine pistol with a long magazine. Sprays a lot of lead, not so much accuracy.',
 }
 
 // Illustrative stats only: a rarity baseline plus a small steady per-gun offset.
