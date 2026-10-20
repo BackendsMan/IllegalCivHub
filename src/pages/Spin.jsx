@@ -127,7 +127,7 @@ function Gun({ name, className = '', style }) {
       {IMG[name] ? (
         <img src={`${import.meta.env.BASE_URL}guns/${IMG[name]}.png`} alt={name} draggable="false" className="absolute inset-0 size-full object-cover" />
       ) : (
-        <div className="grid size-full place-content-center gap-1 p-2 text-center text-xs font-bold text-zinc-400">{name}<span className="text-[10px] font-semibold text-zinc-600">No image</span></div>
+        <div className="grid size-full place-items-center p-2 text-center text-xs font-bold text-zinc-400">No Image</div>
       )}
     </div>
   )
